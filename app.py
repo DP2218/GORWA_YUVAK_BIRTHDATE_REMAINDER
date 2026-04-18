@@ -29,7 +29,6 @@ df['Month'] = df['Birthdate'].dt.strftime('%B')
 # ---------------- HEADER ---------------- #
 st.markdown("""
 <h1 style='text-align: center;'>🎉 Yuvak Birthday Dashboard</h1>
-<p style='text-align: center; color: grey;'>Simple • Clean • Mobile Friendly</p>
 """, unsafe_allow_html=True)
 
 # ---------------- GLOBAL CSS ---------------- #
