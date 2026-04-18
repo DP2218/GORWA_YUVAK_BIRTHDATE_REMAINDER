@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from datetime import datetime, timedelta
+from datetime import datetime
 
 st.set_page_config(page_title="Yuvak Birthday Dashboard", layout="wide")
 
@@ -24,9 +24,6 @@ df['Birthdate'] = pd.to_datetime(df['Birthdate'], errors='coerce')
 df = df.dropna(subset=['Birthdate'])
 
 df['Month'] = df['Birthdate'].dt.strftime('%B')
-df['Day'] = df['Birthdate'].dt.day
-
-today = datetime.now()
 
 # ---------------- HEADER ---------------- #
 st.markdown("""
@@ -38,12 +35,14 @@ st.markdown("""
 st.markdown("""
 <style>
 a { text-decoration:none !important; color:inherit !important; }
+
 .card {
     margin-bottom:20px;
     background:#1a1a1a;
     padding:18px;
     border-radius:12px;
 }
+
 .custom-btn {
     display:flex;
     justify-content:center;
@@ -51,6 +50,7 @@ a { text-decoration:none !important; color:inherit !important; }
     border-radius:10px;
     color:white;
 }
+
 .call-btn { background:#2563eb; }
 .wa-btn { background:#16a34a; }
 </style>
@@ -72,37 +72,6 @@ selected_month = st.selectbox(
 # ---------------- ONLY SHOW AFTER SELECTION ---------------- #
 if selected_month != "Select Month":
 
-    # ---------------- UPCOMING ---------------- #
-    st.markdown("### 📆 Upcoming (Next 7 Days)")
-
-    upcoming_list = []
-    for i in range(7):
-        future = today + timedelta(days=i)
-        temp = df[
-            (df['Day'] == future.day) &
-            (df['Month'] == future.strftime('%B'))
-        ]
-        upcoming_list.append(temp)
-
-    upcoming_df = pd.concat(upcoming_list) if upcoming_list else pd.DataFrame()
-
-    if not upcoming_df.empty:
-        upcoming_df['Birthdate'] = upcoming_df['Birthdate'].dt.strftime('%d %B')
-
-        cols = st.columns(2)
-        for i, (_, row) in enumerate(upcoming_df.iterrows()):
-            with cols[i % 2]:
-                st.markdown(f"""
-                <div class="card">
-                    <b>🎉 {row['Yuvak Name']}</b><br>
-                    📅 {row['Birthdate']}<br>
-                    📞 {row['Contact']}
-                </div>
-                """, unsafe_allow_html=True)
-    else:
-        st.info("No upcoming birthdays")
-
-    # ---------------- MONTH DATA ---------------- #
     st.markdown("### 🎂 Birthday List")
 
     month_df = df[df['Month'] == selected_month].copy()
