@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+import calendar
 
 st.set_page_config(page_title="Yuvak Birthday Dashboard", layout="wide")
 
@@ -28,32 +29,7 @@ df['Month'] = df['Birthdate'].dt.strftime('%B')
 # ---------------- HEADER ---------------- #
 st.markdown("""
 <h1 style='text-align: center;'>🎉 Yuvak Birthday Dashboard</h1>
-<p style='text-align: center; color: grey;'>Simple • Clean • Mobile Friendly</p>
-""", unsafe_allow_html=True)
-
-# ---------------- CSS ---------------- #
-st.markdown("""
-<style>
-a { text-decoration:none !important; color:inherit !important; }
-
-.card {
-    margin-bottom:20px;
-    background:#1a1a1a;
-    padding:18px;
-    border-radius:12px;
-}
-
-.custom-btn {
-    display:flex;
-    justify-content:center;
-    padding:12px;
-    border-radius:10px;
-    color:white;
-}
-
-.call-btn { background:#2563eb; }
-.wa-btn { background:#16a34a; }
-</style>
+<p style='text-align: center; color: grey;'>Modern Calendar View</p>
 """, unsafe_allow_html=True)
 
 # ---------------- MONTH SELECT ---------------- #
@@ -69,54 +45,82 @@ selected_month = st.selectbox(
     ["Select Month"] + available_months
 )
 
-# ---------------- ONLY SHOW AFTER SELECTION ---------------- #
+# ---------------- MAIN ---------------- #
 if selected_month != "Select Month":
 
-    st.markdown("### 🎂 Birthday List")
+    year = 2026
+    month_number = month_order.index(selected_month) + 1
 
-    month_df = df[df['Month'] == selected_month].copy()
-    month_df['Birthdate'] = month_df['Birthdate'].dt.strftime('%d %B')
+    st.markdown(f"## 📅 {selected_month} {year}")
 
-    if not month_df.empty:
-        cols = st.columns(2)
+    cal = calendar.monthcalendar(year, month_number)
 
-        for i, (_, row) in enumerate(month_df.iterrows()):
-            with cols[i % 2]:
-                st.markdown(f"""
-                <div class="card">
-                    <b>🎉 {row['Yuvak Name']}</b><br>
-                    📅 {row['Birthdate']}<br>
-                    📞 {row['Contact']}
-                </div>
-                """, unsafe_allow_html=True)
+    # Prepare birthday dictionary
+    bday_dict = {}
+    for _, row in df[df['Month'] == selected_month].iterrows():
+        day = row['Birthdate'].day
+        name = row['Yuvak Name']
+        if day not in bday_dict:
+            bday_dict[day] = []
+        bday_dict[day].append(name)
 
-                col1, col2 = st.columns(2)
+    # Week header (like Google Calendar)
+    week_days = ["S", "M", "T", "W", "T", "F", "S"]
+    cols = st.columns(7)
+    for i, day in enumerate(week_days):
+        cols[i].markdown(f"<center><b>{day}</b></center>", unsafe_allow_html=True)
 
-                with col1:
-                    st.markdown(f"""
-                    <a href="tel:{row['Contact']}">
-                        <div class="custom-btn call-btn">📞 Call</div>
-                    </a>
+    # Calendar UI
+    for week in cal:
+        cols = st.columns(7)
+        for i, day in enumerate(week):
+
+            if day == 0:
+                cols[i].markdown(" ")
+
+            else:
+                if day in bday_dict:
+                    names = ", ".join(bday_dict[day])
+                    cols[i].markdown(f"""
+                    <div style="
+                        background:#2563eb;
+                        color:white;
+                        padding:12px;
+                        border-radius:50%;
+                        text-align:center;
+                        height:60px;
+                        width:60px;
+                        margin:auto;
+                        font-weight:bold;">
+                        {day}
+                    </div>
+                    <center style="font-size:12px;">🎂</center>
                     """, unsafe_allow_html=True)
 
-                with col2:
-                    msg = f"Happy Birthday {row['Yuvak Name']} 🎉🎂"
-                    wa = f"https://wa.me/{row['Contact']}?text={msg}"
+                    # Show names below
+                    for n in bday_dict[day]:
+                        cols[i].markdown(
+                            f"<center style='font-size:10px;'>{n}</center>",
+                            unsafe_allow_html=True
+                        )
 
-                    st.markdown(f"""
-                    <a href="{wa}">
-                        <div class="custom-btn wa-btn">💬 WhatsApp</div>
-                    </a>
+                else:
+                    cols[i].markdown(f"""
+                    <div style="
+                        background:#1f2937;
+                        color:white;
+                        padding:12px;
+                        border-radius:50%;
+                        text-align:center;
+                        height:60px;
+                        width:60px;
+                        margin:auto;">
+                        {day}
+                    </div>
                     """, unsafe_allow_html=True)
-
-    else:
-        st.info("No birthdays in this month")
-
-else:
-    st.warning("👆 Please select a month to view data")
 
 # ---------------- ALL DATA ---------------- #
-st.markdown("<div style='margin-top:30px;'></div>", unsafe_allow_html=True)
+st.markdown("<br>", unsafe_allow_html=True)
 
 with st.expander("📋 View All Records"):
     all_df = df.copy()
