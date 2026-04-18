@@ -18,7 +18,7 @@ df = df.rename(columns={
 
 # ---------------- FIX CONTACT NUMBER ---------------- #
 df['Contact'] = df['Contact'].fillna(0).astype(int).astype(str)
-df['Contact'] = '91' + df['Contact']   # add country code
+df['Contact'] = '91' + df['Contact']
 
 # ---------------- DATE CLEAN ---------------- #
 df['Birthdate'] = pd.to_datetime(df['Birthdate'], errors='coerce')
@@ -35,6 +35,14 @@ st.markdown("""
 # ---------------- GLOBAL CSS ---------------- #
 st.markdown("""
 <style>
+
+/* Remove all link styles */
+a, a:link, a:visited, a:hover, a:active {
+    text-decoration: none !important;
+    color: inherit !important;
+}
+
+/* Page spacing */
 .block-container {
     padding-top: 2rem;
     padding-bottom: 2rem;
@@ -43,39 +51,42 @@ st.markdown("""
 /* Card */
 .card {
     margin-bottom: 20px;
-    background-color:#111;
+    background-color:#1a1a1a;
     padding:18px;
     border-radius:12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 
-/* Button */
+/* Button base */
 .custom-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    border-radius: 10px;
-    font-weight: 600;
-    color: white;
-    text-decoration: none;
-    width: 100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:12px;
+    border-radius:10px;
+    font-weight:600;
+    width:100%;
+    color:white !important;
+    cursor:pointer;
 }
 
-/* Call button */
+/* High contrast buttons */
 .call-btn {
-    background: linear-gradient(135deg,#1e90ff,#007BFF);
+    background:#2563eb;
+    box-shadow:0 2px 8px rgba(37,99,235,0.4);
 }
 
-/* WhatsApp button */
 .wa-btn {
-    background: linear-gradient(135deg,#25D366,#1ebe5d);
+    background:#16a34a;
+    box-shadow:0 2px 8px rgba(22,163,74,0.4);
 }
 
 /* Hover */
 .custom-btn:hover {
-    opacity: 0.85;
+    opacity:0.9;
+    transform:translateY(-1px);
 }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -87,54 +98,61 @@ month_order = [
 
 available_months = [m for m in month_order if m in df['Month'].values]
 
-selected_month = st.selectbox("📅 Select Month", available_months)
+selected_month = st.selectbox(
+    "📅 Select Month",
+    ["Select Month"] + available_months
+)
 
-month_df = df[df['Month'] == selected_month].copy()
+# ---------------- CONDITIONAL DISPLAY ---------------- #
+if selected_month != "Select Month":
 
-# Format date
-month_df['Birthdate'] = month_df['Birthdate'].dt.strftime('%d %B')
+    month_df = df[df['Month'] == selected_month].copy()
+    month_df['Birthdate'] = month_df['Birthdate'].dt.strftime('%d %B')
 
-# ---------------- CARD UI ---------------- #
-st.markdown("### 🎂 Birthday List")
+    st.markdown("### 🎂 Birthday List")
 
-if not month_df.empty:
+    if not month_df.empty:
 
-    cols = st.columns(2, gap="large")
+        cols = st.columns(2, gap="large")
 
-    for i, (_, row) in enumerate(month_df.iterrows()):
-        with cols[i % 2]:
+        for i, (_, row) in enumerate(month_df.iterrows()):
+            with cols[i % 2]:
 
-            # Card
-            st.markdown(f"""
-            <div class="card">
-                <h4 style="margin:0; color:white;">🎉 {row['Yuvak Name']}</h4>
-                <p style="margin:6px 0; color:#bbb;">📅 {row['Birthdate']}</p>
-                <p style="margin:6px 0; color:#bbb;">📞 {row['Contact']}</p>
-            </div>
-            """, unsafe_allow_html=True)
-
-            # Buttons
-            col1, col2 = st.columns(2, gap="medium")
-
-            with col1:
+                # Card
                 st.markdown(f"""
-                <a href="tel:{row['Contact']}" class="custom-btn call-btn">
-                    📞 Call
-                </a>
+                <div class="card">
+                    <h4 style="margin:0; color:white;">🎉 {row['Yuvak Name']}</h4>
+                    <p style="margin:6px 0; color:#bbb;">📅 {row['Birthdate']}</p>
+                    <p style="margin:6px 0; color:#bbb;">📞 {row['Contact']}</p>
+                </div>
                 """, unsafe_allow_html=True)
 
-            with col2:
-                message = f"Happy Birthday {row['Yuvak Name']} 🎉🎂"
-                wa_url = f"https://wa.me/{row['Contact']}?text={message}"
+                col1, col2 = st.columns(2, gap="medium")
 
-                st.markdown(f"""
-                <a href="{wa_url}" class="custom-btn wa-btn">
-                    💬 WhatsApp
-                </a>
-                """, unsafe_allow_html=True)
+                # Call button
+                with col1:
+                    st.markdown(f"""
+                    <a href="tel:{row['Contact']}" target="_blank">
+                        <div class="custom-btn call-btn">📞 Call</div>
+                    </a>
+                    """, unsafe_allow_html=True)
+
+                # WhatsApp button
+                with col2:
+                    message = f"Happy Birthday {row['Yuvak Name']} 🎉🎂"
+                    wa_url = f"https://wa.me/{row['Contact']}?text={message}"
+
+                    st.markdown(f"""
+                    <a href="{wa_url}" target="_blank">
+                        <div class="custom-btn wa-btn">💬 WhatsApp</div>
+                    </a>
+                    """, unsafe_allow_html=True)
+
+    else:
+        st.info("No birthdays in this month")
 
 else:
-    st.info("No birthdays in this month")
+    st.warning("📅 Please select a month to view birthdays")
 
 # ---------------- SPACING ---------------- #
 st.markdown("<div style='margin-top:30px;'></div>", unsafe_allow_html=True)
