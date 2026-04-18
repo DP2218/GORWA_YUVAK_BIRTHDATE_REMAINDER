@@ -74,7 +74,8 @@ if selected_month != "Select Month":
 
     st.markdown("### 🎂 Birthday List")
 
-    month_df = df[df['Month'] == selected_month].copy()
+month_df = df[df['Month'] == selected_month].copy()
+month_df = month_df.sort_values(by='Birthdate')
     month_df['Birthdate'] = month_df['Birthdate'].dt.strftime('%d %B')
 
     if not month_df.empty:
