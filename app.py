@@ -18,20 +18,65 @@ df = df.rename(columns={
 
 # ---------------- FIX CONTACT NUMBER ---------------- #
 df['Contact'] = df['Contact'].fillna(0).astype(int).astype(str)
-
-# Optional: add country code (recommended)
-df['Contact'] = '91' + df['Contact']
+df['Contact'] = '91' + df['Contact']   # add country code
 
 # ---------------- DATE CLEAN ---------------- #
 df['Birthdate'] = pd.to_datetime(df['Birthdate'], errors='coerce')
 df = df.dropna(subset=['Birthdate'])
 
-df['Month'] = df['Birthdate'].dt.strftime('%B')   # ✅ fixed (removed backtick)
+df['Month'] = df['Birthdate'].dt.strftime('%B')
 
 # ---------------- HEADER ---------------- #
 st.markdown("""
 <h1 style='text-align: center;'>🎉 Yuvak Birthday Dashboard</h1>
 <p style='text-align: center; color: grey;'>Simple • Clean • Mobile Friendly</p>
+""", unsafe_allow_html=True)
+
+# ---------------- GLOBAL CSS ---------------- #
+st.markdown("""
+<style>
+.block-container {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+}
+
+/* Card */
+.card {
+    margin-bottom: 20px;
+    background-color:#111;
+    padding:18px;
+    border-radius:12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Button */
+.custom-btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    border-radius: 10px;
+    font-weight: 600;
+    color: white;
+    text-decoration: none;
+    width: 100%;
+}
+
+/* Call button */
+.call-btn {
+    background: linear-gradient(135deg,#1e90ff,#007BFF);
+}
+
+/* WhatsApp button */
+.wa-btn {
+    background: linear-gradient(135deg,#25D366,#1ebe5d);
+}
+
+/* Hover */
+.custom-btn:hover {
+    opacity: 0.85;
+}
+</style>
 """, unsafe_allow_html=True)
 
 # ---------------- MONTH SELECT ---------------- #
@@ -54,65 +99,46 @@ st.markdown("### 🎂 Birthday List")
 
 if not month_df.empty:
 
-    cols = st.columns(2)
+    cols = st.columns(2, gap="large")
 
     for i, (_, row) in enumerate(month_df.iterrows()):
         with cols[i % 2]:
 
+            # Card
             st.markdown(f"""
-            <div style="
-                background-color:#111;
-                padding:15px;
-                border-radius:12px;
-                margin-bottom:15px;
-                box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            ">
+            <div class="card">
                 <h4 style="margin:0; color:white;">🎉 {row['Yuvak Name']}</h4>
-                <p style="margin:5px 0; color:#bbb;">📅 {row['Birthdate']}</p>
-                <p style="margin:5px 0; color:#bbb;">📞 {row['Contact']}</p>
+                <p style="margin:6px 0; color:#bbb;">📅 {row['Birthdate']}</p>
+                <p style="margin:6px 0; color:#bbb;">📞 {row['Contact']}</p>
             </div>
             """, unsafe_allow_html=True)
 
-            col1, col2 = st.columns(2)
+            # Buttons
+            col1, col2 = st.columns(2, gap="medium")
 
-            # Call button
             with col1:
                 st.markdown(f"""
-                <a href="tel:{row['Contact']}">
-                    <button style="
-                        width:100%;
-                        background-color:#007BFF;
-                        color:white;
-                        padding:8px;
-                        border:none;
-                        border-radius:8px;">
-                        📞 Call
-                    </button>
+                <a href="tel:{row['Contact']}" class="custom-btn call-btn">
+                    📞 Call
                 </a>
                 """, unsafe_allow_html=True)
 
-            # WhatsApp button
             with col2:
                 message = f"Happy Birthday {row['Yuvak Name']} 🎉🎂"
                 wa_url = f"https://wa.me/{row['Contact']}?text={message}"
 
                 st.markdown(f"""
-                <a href="{wa_url}">
-                    <button style="
-                        width:100%;
-                        background-color:#25D366;
-                        color:white;
-                        padding:8px;
-                        border:none;
-                        border-radius:8px;">
-                        💬 WhatsApp
-                    </button>
+                <a href="{wa_url}" class="custom-btn wa-btn">
+                    💬 WhatsApp
                 </a>
                 """, unsafe_allow_html=True)
 
 else:
     st.info("No birthdays in this month")
-st.markdown("<br><br>", unsafe_allow_html=True)
+
+# ---------------- SPACING ---------------- #
+st.markdown("<div style='margin-top:30px;'></div>", unsafe_allow_html=True)
+
 # ---------------- ALL DATA ---------------- #
 with st.expander("📋 View All Records"):
     all_df = df.copy()
