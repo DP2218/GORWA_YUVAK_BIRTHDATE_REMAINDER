@@ -15,11 +15,11 @@ df = df.rename(columns={
     'Birth Date': 'Birthdate'
 })
 
-# ---------------- FIX CONTACT ---------------- #
+# Fix contact
 df['Contact'] = df['Contact'].fillna(0).astype(int).astype(str)
 df['Contact'] = '91' + df['Contact']
 
-# ---------------- DATE CLEAN ---------------- #
+# Clean date
 df['Birthdate'] = pd.to_datetime(df['Birthdate'], errors='coerce')
 df = df.dropna(subset=['Birthdate'])
 
@@ -38,26 +38,21 @@ st.markdown("""
 st.markdown("""
 <style>
 a { text-decoration:none !important; color:inherit !important; }
-
 .card {
     margin-bottom:20px;
     background:#1a1a1a;
     padding:18px;
     border-radius:12px;
 }
-
 .custom-btn {
     display:flex;
     justify-content:center;
     padding:12px;
     border-radius:10px;
     color:white;
-    font-weight:600;
 }
-
 .call-btn { background:#2563eb; }
 .wa-btn { background:#16a34a; }
-
 </style>
 """, unsafe_allow_html=True)
 
@@ -74,83 +69,50 @@ selected_month = st.selectbox(
     ["Select Month"] + available_months
 )
 
-# ---------------- SHOW DATA ONLY AFTER SELECT ---------------- #
+# ---------------- ONLY SHOW AFTER SELECTION ---------------- #
 if selected_month != "Select Month":
 
-    # ================= UPCOMING CALENDAR ================= #
-    st.markdown("### 📆 Upcoming Birthdays")
+    # ---------------- UPCOMING ---------------- #
+    st.markdown("### 📆 Upcoming (Next 7 Days)")
 
     upcoming_list = []
-
     for i in range(7):
         future = today + timedelta(days=i)
-
         temp = df[
             (df['Day'] == future.day) &
             (df['Month'] == future.strftime('%B'))
-        ].copy()
-
-        temp['DisplayDate'] = future.strftime('%d %b')
+        ]
         upcoming_list.append(temp)
 
     upcoming_df = pd.concat(upcoming_list) if upcoming_list else pd.DataFrame()
 
     if not upcoming_df.empty:
+        upcoming_df['Birthdate'] = upcoming_df['Birthdate'].dt.strftime('%d %B')
 
-        cols = st.columns(3)
-
+        cols = st.columns(2)
         for i, (_, row) in enumerate(upcoming_df.iterrows()):
-            with cols[i % 3]:
-
-                # Highlight today
-                is_today = row['DisplayDate'] == today.strftime('%d %b')
-                color = "#16a34a" if is_today else "#2563eb"
-
+            with cols[i % 2]:
                 st.markdown(f"""
-                <div style="
-                    background:#1f1f1f;
-                    padding:15px;
-                    border-radius:12px;
-                    text-align:center;
-                    margin-bottom:15px;
-                ">
-                    <div style="
-                        background:{color};
-                        color:white;
-                        padding:8px;
-                        border-radius:8px;
-                        font-weight:bold;
-                        margin-bottom:10px;
-                    ">
-                        📅 {row['DisplayDate']}
-                    </div>
-
-                    <div style="color:white; font-weight:600;">
-                        🎉 {row['Yuvak Name']}
-                    </div>
-
-                    <div style="color:#bbb;">
-                        📞 {row['Contact']}
-                    </div>
+                <div class="card">
+                    <b>🎉 {row['Yuvak Name']}</b><br>
+                    📅 {row['Birthdate']}<br>
+                    📞 {row['Contact']}
                 </div>
                 """, unsafe_allow_html=True)
-
     else:
         st.info("No upcoming birthdays")
 
-    # ================= MONTH VIEW ================= #
+    # ---------------- MONTH DATA ---------------- #
     st.markdown("### 🎂 Birthday List")
 
     month_df = df[df['Month'] == selected_month].copy()
     month_df['Birthdate'] = month_df['Birthdate'].dt.strftime('%d %B')
 
     if not month_df.empty:
-
         cols = st.columns(2)
 
         for i, (_, row) in enumerate(month_df.iterrows()):
             with cols[i % 2]:
-
                 st.markdown(f"""
                 <div class="card">
                     <b>🎉 {row['Yuvak Name']}</b><br>
