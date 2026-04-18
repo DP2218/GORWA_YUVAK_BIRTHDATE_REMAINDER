@@ -16,11 +16,17 @@ df = df.rename(columns={
     'Birth Date': 'Birthdate'
 })
 
-# Convert date
+# ---------------- FIX CONTACT NUMBER ---------------- #
+df['Contact'] = df['Contact'].fillna(0).astype(int).astype(str)
+
+# Optional: add country code (recommended)
+df['Contact'] = '91' + df['Contact']
+
+# ---------------- DATE CLEAN ---------------- #
 df['Birthdate'] = pd.to_datetime(df['Birthdate'], errors='coerce')
 df = df.dropna(subset=['Birthdate'])
 
-df['Month'] = df['Birthdate'].dt.strftime('%B')
+df['Month'] = df['Birthdate'].dt.strftime('%B')   # ✅ fixed (removed backtick)
 
 # ---------------- HEADER ---------------- #
 st.markdown("""
@@ -48,7 +54,7 @@ st.markdown("### 🎂 Birthday List")
 
 if not month_df.empty:
 
-    cols = st.columns(2)  # 2 cards per row (mobile friendly)
+    cols = st.columns(2)
 
     for i, (_, row) in enumerate(month_df.iterrows()):
         with cols[i % 2]:
@@ -67,39 +73,38 @@ if not month_df.empty:
             </div>
             """, unsafe_allow_html=True)
 
-            # Buttons
             col1, col2 = st.columns(2)
 
+            # Call button
             with col1:
                 st.markdown(f"""
-                <a href="tel:{row['Contact']}" target="_blank">
+                <a href="tel:{row['Contact']}">
                     <button style="
                         width:100%;
                         background-color:#007BFF;
                         color:white;
                         padding:8px;
                         border:none;
-                        border-radius:8px;
-                        cursor:pointer;">
+                        border-radius:8px;">
                         📞 Call
                     </button>
                 </a>
                 """, unsafe_allow_html=True)
 
+            # WhatsApp button
             with col2:
                 message = f"Happy Birthday {row['Yuvak Name']} 🎉🎂"
                 wa_url = f"https://wa.me/{row['Contact']}?text={message}"
 
                 st.markdown(f"""
-                <a href="{wa_url}" target="_blank">
+                <a href="{wa_url}">
                     <button style="
                         width:100%;
                         background-color:#25D366;
                         color:white;
                         padding:8px;
                         border:none;
-                        border-radius:8px;
-                        cursor:pointer;">
+                        border-radius:8px;">
                         💬 WhatsApp
                     </button>
                 </a>
@@ -107,7 +112,7 @@ if not month_df.empty:
 
 else:
     st.info("No birthdays in this month")
-
+st.markdown("<br><br>", unsafe_allow_html=True)
 # ---------------- ALL DATA ---------------- #
 with st.expander("📋 View All Records"):
     all_df = df.copy()
