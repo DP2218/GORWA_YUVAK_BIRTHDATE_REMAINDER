@@ -446,118 +446,37 @@ button {
 }
 
 /* ==========================================================================
-   Month Selector & Filter Controls Bar
+   Month Pills Filter Bar
    ========================================================================== */
-.controls-section {
+.month-pills-section {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-lg);
-  padding: 22px;
+  padding: 16px 20px;
   margin-bottom: 24px;
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
   box-shadow: var(--shadow-sm);
 }
 
-.filters-grid-bar {
-  display: grid;
-  grid-template-columns: 1.3fr 1.15fr 1fr 1.3fr auto;
-  gap: 16px;
-  align-items: flex-end;
-  margin-bottom: 16px;
-}
-
-.filter-field-box {
-  display: flex;
-  flex-direction: column;
-  gap: 7px;
-}
-
-.field-label {
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-secondary);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-.select-box-wrap {
-  position: relative;
-  width: 100%;
-}
-
-.styled-dropdown {
-  width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  padding: 10px 36px 10px 14px;
-  border-radius: var(--radius-md);
-  background: var(--bg-secondary);
-  border: 1.5px solid var(--border-subtle);
-  color: var(--text-primary);
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--transition-fast);
-  outline: none;
-}
-
-.styled-dropdown:hover {
-  border-color: var(--border-hover);
-  background: var(--bg-card-hover);
-}
-
-.styled-dropdown:focus {
-  border-color: var(--accent-primary);
-  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.25);
-}
-
-.styled-dropdown option {
-  background: var(--bg-secondary);
-  color: var(--text-primary);
-  padding: 8px;
-}
-
-.dropdown-chevron {
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  font-size: 0.65rem;
-  color: var(--text-muted);
-  pointer-events: none;
-  transition: transform var(--transition-fast);
-}
-
-.styled-dropdown:focus + .dropdown-chevron {
-  transform: translateY(-50%) rotate(180deg);
-  color: var(--accent-primary);
-}
-
-/* Quick Month Pills Row (Clean wrapping, no ugly horizontal scrollbars) */
-.quick-month-pills-row {
+.month-pills-bar {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 8px;
-  padding-top: 16px;
-  border-top: 1px solid var(--border-subtle);
+  gap: 10px;
 }
 
 .month-chip {
-  padding: 6px 14px;
+  padding: 8px 18px;
   border-radius: var(--radius-full);
   background: var(--bg-glass);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  font-size: 0.8rem;
+  font-size: 0.85rem;
   font-weight: 600;
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
   white-space: nowrap;
   transition: all var(--transition-fast);
   cursor: pointer;
@@ -568,7 +487,8 @@ button {
   background: var(--bg-card-hover);
   color: var(--text-primary);
   border-color: var(--border-hover);
-  transform: translateY(-1px);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-sm);
 }
 
 .month-chip.active {
@@ -576,13 +496,14 @@ button {
   color: #ffffff;
   border-color: transparent;
   box-shadow: var(--accent-glow);
+  transform: translateY(-2px);
 }
 
 .month-badge-count {
-  font-size: 0.72rem;
-  background: rgba(0, 0, 0, 0.25);
+  font-size: 0.75rem;
+  background: rgba(0, 0, 0, 0.3);
   color: inherit;
-  padding: 2px 7px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
   font-weight: 700;
 }

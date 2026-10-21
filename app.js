@@ -263,69 +263,37 @@
   }
 
   /**
-   * Render Month Dropdown & Synced Quick Pills with dynamic counts
+   * Render Month Pills Bar with dynamic member counts
    */
   function renderMonthCarousel() {
-    const monthSelect = document.getElementById('monthSelect');
-    const filterTypeSelect = document.getElementById('filterTypeSelect');
     const carousel = document.getElementById('monthCarousel');
+    if (!carousel) return;
 
-    // 1. Populate Month Dropdown
-    if (monthSelect) {
-      const currentSelected = state.selectedMonth;
-      monthSelect.innerHTML = '';
+    carousel.innerHTML = '';
 
-      const allOpt = document.createElement('option');
-      allOpt.value = 'All';
-      allOpt.textContent = `🌟 All Months (${state.yuvaks.length} Members)`;
-      monthSelect.appendChild(allOpt);
+    // "All Months" Pill
+    const allChip = document.createElement('button');
+    allChip.className = `month-chip ${state.selectedMonth === 'All' ? 'active' : ''}`;
+    allChip.innerHTML = `🌟 All Months <span class="month-badge-count">${state.yuvaks.length}</span>`;
+    allChip.addEventListener('click', () => {
+      state.selectedMonth = 'All';
+      refreshUI();
+    });
+    carousel.appendChild(allChip);
 
-      MONTH_NAMES.forEach((month, idx) => {
-        const count = state.yuvaks.filter(y => y.month === month || y.monthNum === idx + 1).length;
-        const opt = document.createElement('option');
-        opt.value = month;
-        opt.textContent = `📅 ${month} (${count} Birthdays)`;
-        monthSelect.appendChild(opt);
-      });
-
-      monthSelect.value = currentSelected;
-    }
-
-    // 2. Sync Filter Type Dropdown
-    if (filterTypeSelect) {
-      filterTypeSelect.value = state.activeFilter;
-    }
-
-    // 3. Render Synced Quick Pills (no scrollbar)
-    if (carousel) {
-      carousel.innerHTML = '';
-
-      // "All Records" Chip
-      const allChip = document.createElement('button');
-      allChip.className = `month-chip ${state.selectedMonth === 'All' ? 'active' : ''}`;
-      allChip.innerHTML = `🌟 All Months <span class="month-badge-count">${state.yuvaks.length}</span>`;
-      allChip.addEventListener('click', () => {
-        state.selectedMonth = 'All';
-        if (monthSelect) monthSelect.value = 'All';
+    // 12 Month Pills (January to December)
+    MONTH_NAMES.forEach((month, idx) => {
+      const count = state.yuvaks.filter(y => y.month === month || y.monthNum === idx + 1).length;
+      const chip = document.createElement('button');
+      chip.className = `month-chip ${state.selectedMonth === month ? 'active' : ''}`;
+      chip.innerHTML = `${month} <span class="month-badge-count">${count}</span>`;
+      
+      chip.addEventListener('click', () => {
+        state.selectedMonth = month;
         refreshUI();
       });
-      carousel.appendChild(allChip);
-
-      // 12 Months
-      MONTH_NAMES.forEach((month, idx) => {
-        const count = state.yuvaks.filter(y => y.month === month || y.monthNum === idx + 1).length;
-        const chip = document.createElement('button');
-        chip.className = `month-chip ${state.selectedMonth === month ? 'active' : ''}`;
-        chip.innerHTML = `${month} <span class="month-badge-count">${count}</span>`;
-        
-        chip.addEventListener('click', () => {
-          state.selectedMonth = month;
-          if (monthSelect) monthSelect.value = month;
-          refreshUI();
-        });
-        carousel.appendChild(chip);
-      });
-    }
+      carousel.appendChild(chip);
+    });
   }
 
   /**
@@ -1259,10 +1227,7 @@
   // ==========================================================================
 
   function updateFilterButtonsUI() {
-    const filterTypeSelect = document.getElementById('filterTypeSelect');
-    if (filterTypeSelect) {
-      filterTypeSelect.value = state.activeFilter;
-    }
+    // Month pills active state is handled directly in renderMonthCarousel
   }
 
   function bindControls() {
@@ -1284,24 +1249,6 @@
       confettiBtn.addEventListener('click', () => {
         launchConfetti();
         showToast('🎉 Wishing joyous celebrations to our Gorwa Yuvaks!', 'info');
-      });
-    }
-
-    // Month Dropdown Listener
-    const monthSelect = document.getElementById('monthSelect');
-    if (monthSelect) {
-      monthSelect.addEventListener('change', e => {
-        state.selectedMonth = e.target.value;
-        refreshUI();
-      });
-    }
-
-    // Filter Type Dropdown Listener
-    const filterTypeSelect = document.getElementById('filterTypeSelect');
-    if (filterTypeSelect) {
-      filterTypeSelect.addEventListener('change', e => {
-        state.activeFilter = e.target.value;
-        refreshUI();
       });
     }
 
