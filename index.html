@@ -28,29 +28,36 @@
         </div>
       </div>
 
-      <div class="header-actions">
+      <div class="header-right-group">
         <div class="datetime-pill" id="liveClock" title="Current Date & Time">
           <span>🗓️</span> <span id="clockText">Loading...</span>
         </div>
 
-        <button class="action-btn primary" id="addYuvakBtn" title="Add a new member">
-          <span>➕</span> Add Yuvak
+        <!-- Hamburger Menu Button -->
+        <button class="hamburger-btn" id="hamburgerBtn" title="Menu" aria-label="Toggle Menu">
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
+          <span class="hamburger-line"></span>
         </button>
+      </div>
 
-        <button class="action-btn" id="importModalBtn" title="Import from Excel (.xlsx)">
+      <!-- Dropdown Menu (hidden by default) -->
+      <div class="header-dropdown-menu" id="headerDropdownMenu">
+        <button class="menu-item" id="addYuvakBtn">
+          <span>➕</span> Add New Yuvak
+        </button>
+        <button class="menu-item" id="importModalBtn">
           <span>📥</span> Import Excel
         </button>
-
-        <button class="action-btn" id="exportBtn" title="Export to Excel (.xlsx)">
-          <span>📤</span> Export
+        <button class="menu-item" id="exportBtn">
+          <span>📤</span> Export to Excel
         </button>
-
-        <button class="icon-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
-          <span id="themeIcon">☀️</span>
+        <div class="menu-divider"></div>
+        <button class="menu-item" id="themeToggleBtn">
+          <span id="themeIcon">☀️</span> Toggle Theme
         </button>
-
-        <button class="icon-btn" id="resetDataBtn" title="Reset to original Excel data">
-          <span>🔄</span>
+        <button class="menu-item" id="resetDataBtn">
+          <span>🔄</span> Reset Data
         </button>
       </div>
     </header>

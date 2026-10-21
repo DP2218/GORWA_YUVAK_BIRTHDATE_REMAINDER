@@ -1231,6 +1231,33 @@
   }
 
   function bindControls() {
+    // Hamburger Menu Toggle
+    const hamburgerBtn = document.getElementById('hamburgerBtn');
+    const dropdownMenu = document.getElementById('headerDropdownMenu');
+    if (hamburgerBtn && dropdownMenu) {
+      hamburgerBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        hamburgerBtn.classList.toggle('active');
+        dropdownMenu.classList.toggle('open');
+      });
+
+      // Close dropdown when clicking outside
+      document.addEventListener('click', (e) => {
+        if (!hamburgerBtn.contains(e.target) && !dropdownMenu.contains(e.target)) {
+          hamburgerBtn.classList.remove('active');
+          dropdownMenu.classList.remove('open');
+        }
+      });
+
+      // Close dropdown when a menu item is clicked
+      dropdownMenu.querySelectorAll('.menu-item').forEach(item => {
+        item.addEventListener('click', () => {
+          hamburgerBtn.classList.remove('active');
+          dropdownMenu.classList.remove('open');
+        });
+      });
+    }
+
     // Add Yuvak Button
     const addBtn = document.getElementById('addYuvakBtn');
     if (addBtn) addBtn.addEventListener('click', openAddModal);
