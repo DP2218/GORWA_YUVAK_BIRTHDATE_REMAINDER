@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gorwa Yuvak Birthday Dashboard & Reminder</title>
+  <meta name="description" content="Gorwa Yuvak Mandal Birthday Reminders and Dashboard - Simple, Clean, Mobile-friendly with instant WhatsApp & Call integration.">
+  
+  <!-- Modern Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div class="app-container">
+
+    <!-- ================= SITE HEADER ================= -->
+    <header class="site-header">
+      <div class="brand-wrapper">
+        <div class="brand-logo-badge" title="Gorwa Yuvak Mandal">🎉</div>
+        <div class="brand-text">
+          <h1>Gorwa Yuvak Birthday Dashboard</h1>
+          <p><span>✨ Simple • Clean • Mobile Friendly</span></p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="datetime-pill" id="liveClock" title="Current Date & Time">
+          <span>🗓️</span> <span id="clockText">Loading...</span>
+        </div>
+
+        <button class="action-btn primary" id="addYuvakBtn" title="Add a new member">
+          <span>➕</span> Add Yuvak
+        </button>
+
+        <button class="action-btn" id="importModalBtn" title="Import from Excel (.xlsx)">
+          <span>📥</span> Import Excel
+        </button>
+
+        <button class="action-btn" id="exportBtn" title="Export to Excel (.xlsx)">
+          <span>📤</span> Export
+        </button>
+
+        <button class="icon-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+          <span id="themeIcon">☀️</span>
+        </button>
+
+        <button class="icon-btn" id="resetDataBtn" title="Reset to original Excel data">
+          <span>🔄</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ================= SPOTLIGHT BANNER (TODAY & UPCOMING) ================= -->
+    <section class="spotlight-banner" id="spotlightBanner">
+      <div class="spotlight-header">
+        <div class="spotlight-title">
+          <span class="spotlight-badge" id="spotlightBadge">🌟 Spotlight</span>
+          <h2 id="spotlightHeadline">Today's Celebrations & Wishes</h2>
+        </div>
+        <button class="confetti-trigger-btn" id="confettiBtn">
+          <span>🎉</span> Celebrate with Confetti!
+        </button>
+      </div>
+      <div class="spotlight-cards-slider" id="spotlightCards">
+        <!-- Rendered dynamically by JavaScript -->
+      </div>
+    </section>
+
+    <!-- ================= STATISTICS OVERVIEW ================= -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon blue">👥</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statTotalYuvaks">103</div>
+          <div class="stat-label">Total Yuvaks Registered</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon gold">🎂</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statTodayBirthdays">0</div>
+          <div class="stat-label">Birthdays Today</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon green">⚡</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statUpcomingWeek">0</div>
+          <div class="stat-label">Upcoming in Next 7 Days</div>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-icon purple">📅</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statMonthCount">0</div>
+          <div class="stat-label" id="statMonthLabel">This Month's Birthdays</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= MONTH & FILTER CONTROLS BAR ================= -->
+    <section class="controls-section">
+      <div class="filters-grid-bar">
+        <!-- 1. Month Filter Dropdown -->
+        <div class="filter-field-box">
+          <label class="field-label" for="monthSelect">
+            <span class="field-icon">📅</span> Select Month
+          </label>
+          <div class="select-box-wrap">
+            <select class="styled-dropdown" id="monthSelect" title="Filter by Month">
+              <!-- Populated dynamically by JS with months & counts -->
+            </select>
+            <span class="dropdown-chevron">▼</span>
+          </div>
+        </div>
+
+        <!-- 2. Filter Type Dropdown -->
+        <div class="filter-field-box">
+          <label class="field-label" for="filterTypeSelect">
+            <span class="field-icon">🎯</span> Filter Type
+          </label>
+          <div class="select-box-wrap">
+            <select class="styled-dropdown" id="filterTypeSelect" title="Filter Type">
+              <option value="all">🌟 All Records</option>
+              <option value="today">🎂 Birthdays Today Only</option>
+              <option value="upcoming7">⚡ Upcoming in Next 7 Days</option>
+              <option value="current-month">📅 Current Month (October)</option>
+            </select>
+            <span class="dropdown-chevron">▼</span>
+          </div>
+        </div>
+
+        <!-- 3. Sort Order Dropdown -->
+        <div class="filter-field-box">
+          <label class="field-label" for="sortSelect">
+            <span class="field-icon">↕️</span> Sort Order
+          </label>
+          <div class="select-box-wrap">
+            <select class="styled-dropdown" id="sortSelect" title="Sort birthdays">
+              <option value="day-asc">📅 Day: 1st to 31st</option>
+              <option value="day-desc">📅 Day: 31st to 1st</option>
+              <option value="upcoming">⏳ Next Upcoming First</option>
+              <option value="name-asc">🔤 Name: A to Z</option>
+              <option value="name-desc">🔤 Name: Z to A</option>
+            </select>
+            <span class="dropdown-chevron">▼</span>
+          </div>
+        </div>
+
+        <!-- 4. Search Box -->
+        <div class="filter-field-box search-field-box">
+          <label class="field-label" for="searchInput">
+            <span class="field-icon">🔍</span> Search Member
+          </label>
+          <div class="search-input-box">
+            <span class="search-icon">🔍</span>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search name, mobile..." autocomplete="off">
+            <button class="search-clear-btn" id="searchClearBtn" title="Clear Search">✕</button>
+          </div>
+        </div>
+
+        <!-- 5. View Switcher -->
+        <div class="filter-field-box view-field-box">
+          <label class="field-label">
+            <span class="field-icon">👁️</span> View Mode
+          </label>
+          <div class="view-toggle-group">
+            <button class="view-btn active" data-view="grid" title="Card Grid View">🎴 Cards</button>
+            <button class="view-btn" data-view="table" title="Table / Records View">📋 Table</button>
+            <button class="view-btn" data-view="calendar" title="Calendar View">🗓️ Calendar</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Month Pills (wrapped neatly with no overflowing scrollbar) -->
+      <div class="quick-month-pills-row" id="monthCarousel">
+        <!-- Rendered by JS as synced quick-pills -->
+      </div>
+    </section>
+
+    <!-- ================= RESULTS VIEW AREA ================= -->
+    <main id="mainContent">
+      <div class="results-header">
+        <div class="results-count">
+          Showing <span id="displayedCount">0</span> of <span id="totalAvailableCount">0</span> yuvaks
+        </div>
+        <div id="filterTagContainer"></div>
+      </div>
+
+      <!-- View 1: Card Grid View -->
+      <div class="cards-grid" id="cardsGridView">
+        <!-- Rendered by JS -->
+      </div>
+
+      <!-- View 2: Table / Records View (Like Streamlit View All Records) -->
+      <div class="table-container" id="tableView" style="display: none;">
+        <table class="yuvak-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Yuvak Name</th>
+              <th>Birth Date</th>
+              <th>Upcoming In</th>
+              <th>Contact Number</th>
+              <th>Instant Actions</th>
+            </tr>
+          </thead>
+          <tbody id="tableBody">
+            <!-- Rendered by JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- View 3: Calendar View -->
+      <div class="calendar-container" id="calendarView" style="display: none;">
+        <div class="calendar-header">
+          <h3 id="calMonthTitle">October 2026</h3>
+          <div class="cal-legend" style="font-size: 0.85rem; color: var(--text-secondary);">
+            ⭐ Highlighted days indicate birthdays
+          </div>
+        </div>
+        <div class="calendar-grid" id="calendarGrid">
+          <!-- Rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Empty State -->
+      <div class="empty-state" id="emptyState" style="display: none;">
+        <div class="empty-state-icon">🔍</div>
+        <h3>No Birthdays Found</h3>
+        <p>No records matched your selected month or search filter. Try choosing another month or resetting filters.</p>
+        <button class="action-btn primary" id="resetFilterBtn">View All Birthdays</button>
+      </div>
+    </main>
+
+  </div><!-- /app-container -->
+
+  <!-- ================= MODAL: WHATSAPP WISH CUSTOMIZER ================= -->
+  <div class="modal-overlay" id="wishModalOverlay">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3><span>💬</span> Wish Birthday on WhatsApp</h3>
+        <button class="modal-close-btn" data-close-modal="wishModalOverlay">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 14px; font-size: 0.95rem;">
+          Wishing: <strong id="wishRecipientName" style="color: var(--accent-primary);">--</strong>
+          <div style="font-size: 0.8rem; color: var(--text-muted);" id="wishRecipientContact">--</div>
+        </div>
+
+        <label class="form-label">Choose Message Template:</label>
+        <div class="wish-preset-group" id="wishPresets">
+          <button class="wish-preset-btn active" data-preset="baps">
+            🌸 <strong>Satsang Blessing</strong> (Swaminarayan & Mahant Swami Maharaj)
+          </button>
+          <button class="wish-preset-btn" data-preset="gujarati">
+            ✨ <strong>Gujarati Traditional</strong> (જન્મદિવસની હાર્દિક શુભકામનાઓ)
+          </button>
+          <button class="wish-preset-btn" data-preset="english">
+            🎉 <strong>English Joyful</strong> (Full health, happiness & success)
+          </button>
+          <button class="wish-preset-btn" data-preset="short">
+            🎂 <strong>Short & Sweet</strong> (Celebration & smiles)
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="customWishText">Editable Message Preview:</label>
+          <textarea class="form-textarea" id="customWishText" rows="4"></textarea>
+          <div class="form-help">You can edit the message text before opening WhatsApp.</div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="action-btn" id="copyWishBtn">📋 Copy Wish</button>
+        <a href="#" class="action-btn primary" id="sendWaDirectBtn" target="_blank" rel="noopener noreferrer">
+          <span>💬</span> Open WhatsApp
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ADD / EDIT YUVAK ================= -->
+  <div class="modal-overlay" id="yuvakFormModalOverlay">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3 id="formModalTitle"><span>➕</span> Add New Yuvak</h3>
+        <button class="modal-close-btn" data-close-modal="yuvakFormModalOverlay">✕</button>
+      </div>
+      <form id="yuvakForm">
+        <div class="modal-body">
+          <input type="hidden" id="editYuvakId" value="">
+
+          <div class="form-group">
+            <label class="form-label" for="formName">Full Name *</label>
+            <input type="text" class="form-input" id="formName" placeholder="e.g. PATEL ARTH KALPESHKUMAR" required>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formBirthdate">Birthdate *</label>
+            <input type="date" class="form-input" id="formBirthdate" required>
+            <div class="form-help">Select the birth date (day and month will be recorded).</div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="formContact">Mobile / Contact Number *</label>
+            <input type="tel" class="form-input" id="formContact" placeholder="e.g. 9408150896 or 919408150896" required>
+            <div class="form-help">10-digit Indian mobile number (country code 91 is added automatically).</div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="action-btn" data-close-modal="yuvakFormModalOverlay">Cancel</button>
+          <button type="submit" class="action-btn primary" id="saveYuvakBtn">Save Member</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: IMPORT EXCEL ================= -->
+  <div class="modal-overlay" id="importModalOverlay">
+    <div class="modal-window">
+      <div class="modal-header">
+        <h3><span>📥</span> Import Excel Spreadsheet</h3>
+        <button class="modal-close-btn" data-close-modal="importModalOverlay">✕</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: var(--text-secondary); margin-bottom: 16px;">
+          Upload your <code>.xlsx</code> or <code>.xls</code> file (e.g. <code>GORWA YUVAK BIRTHDATES.xlsx</code>). The app will read columns <strong>Name</strong>, <strong>Birth Date</strong>, and <strong>Contact No</strong>.
+        </p>
+
+        <div class="file-dropzone" id="fileDropzone">
+          <div class="dropzone-icon">📁</div>
+          <div style="font-weight: 700; margin-bottom: 4px;">Drag & Drop your Excel file here</div>
+          <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 12px;">or click to browse from your device</div>
+          <input type="file" id="excelFileInput" accept=".xlsx, .xls, .csv" style="display: none;">
+          <button type="button" class="action-btn" onclick="document.getElementById('excelFileInput').click()">Browse Files</button>
+        </div>
+
+        <div id="importPreview" style="margin-top: 16px; display: none;">
+          <div style="font-size: 0.85rem; font-weight: 700; margin-bottom: 6px;">Parsed Preview:</div>
+          <div id="importSummaryText" style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 10px;"></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="action-btn" data-close-modal="importModalOverlay">Cancel</button>
+        <button type="button" class="action-btn primary" id="confirmImportBtn" disabled>Import Data</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST CONTAINER ================= -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ================= SCRIPTS ================= -->
+  <!-- 1. Offline Helper Libraries -->
+  <script src="libs/xlsx.full.min.js"></script>
+  <script src="libs/confetti.browser.min.js"></script>
+  <!-- 2. Cleaned Database from GORWA YUVAK BIRTHDATES.xlsx -->
+  <script src="data.js"></script>
+  <!-- 3. Main Dashboard Engine -->
+  <script src="app.js"></script>
+</body>
+</html>
