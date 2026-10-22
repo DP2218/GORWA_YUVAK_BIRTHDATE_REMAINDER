@@ -957,6 +957,10 @@ button {
   transition: all var(--transition-fast);
   color: #ffffff !important;
   text-decoration: none !important;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  line-height: inherit;
 }
 
 .btn-call {
@@ -1083,6 +1087,10 @@ button {
   align-items: center;
   gap: 6px;
   color: #fff !important;
+  border: none;
+  cursor: pointer;
+  font-family: inherit;
+  text-decoration: none !important;
 }
 
 .mini-action-btn.call { background: var(--call-color); }

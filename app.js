@@ -346,6 +346,8 @@
         cardsContainer.appendChild(createSpotlightCard(yuvak, false));
       });
     }
+
+    attachCardListeners(cardsContainer);
   }
 
   function createSpotlightCard(yuvak, isToday) {
@@ -354,7 +356,6 @@
 
     const days = getDaysUntilBirthday(yuvak.monthNum, yuvak.day);
     let statusText = isToday ? '🎂 Today!' : (days === 1 ? '🎈 Tomorrow!' : `In ${days} days`);
-    const waUrl = getWhatsAppLink(yuvak.name, yuvak.contact);
 
     card.innerHTML = `
       <div style="display:flex; justify-content:space-between; align-items:center;">
@@ -369,9 +370,9 @@
         <a href="tel:${yuvak.contact}" class="card-action-btn btn-call" title="Call ${escapeHtml(yuvak.name)}">
           📞 Call
         </a>
-        <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="card-action-btn btn-wa" title="Wish on WhatsApp">
+        <button type="button" class="card-action-btn btn-wa" data-wish-modal="${yuvak.id}" title="Wish on WhatsApp">
           💬 WhatsApp
-        </a>
+        </button>
       </div>
     `;
     return card;
@@ -581,9 +582,9 @@
           <a href="tel:${yuvak.contact}" class="card-action-btn btn-call" title="Call ${escapeHtml(yuvak.name)}">
             📞 Call
           </a>
-          <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="card-action-btn btn-wa" title="Wish on WhatsApp">
+          <button type="button" class="card-action-btn btn-wa" data-wish-modal="${yuvak.id}" title="Wish on WhatsApp">
             💬 WhatsApp
-          </a>
+          </button>
         </div>
 
         <div class="card-footer-extra">
@@ -643,10 +644,10 @@
         <td>
           <div class="table-actions">
             <a href="tel:${yuvak.contact}" class="mini-action-btn call" title="Call">📞</a>
-            <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="mini-action-btn wa" title="WhatsApp">💬</a>
-            <button class="mini-action-btn" data-wish-modal="${yuvak.id}" style="background:var(--accent-primary);" title="Custom Wish">✨</button>
-            <button class="mini-action-btn" data-edit-yuvak="${yuvak.id}" style="background:var(--bg-glass); border:1px solid var(--border-subtle); color:var(--text-secondary) !important;" title="Edit">✏️</button>
-            <button class="mini-action-btn" data-delete-yuvak="${yuvak.id}" style="background:rgba(239, 68, 68, 0.15); color:var(--danger-color) !important;" title="Delete">🗑️</button>
+            <button type="button" class="mini-action-btn wa" data-wish-modal="${yuvak.id}" title="Wish on WhatsApp">💬</button>
+            <button type="button" class="mini-action-btn" data-wish-modal="${yuvak.id}" style="background:var(--accent-primary);" title="Custom Wish">✨</button>
+            <button type="button" class="mini-action-btn" data-edit-yuvak="${yuvak.id}" style="background:var(--bg-glass); border:1px solid var(--border-subtle); color:var(--text-secondary) !important;" title="Edit">✏️</button>
+            <button type="button" class="mini-action-btn" data-delete-yuvak="${yuvak.id}" style="background:rgba(239, 68, 68, 0.15); color:var(--danger-color) !important;" title="Delete">🗑️</button>
           </div>
         </td>
       `;
@@ -1173,6 +1174,16 @@
             showToast('📋 Birthday wish copied to clipboard!', 'success');
           });
         }
+      });
+    }
+
+    // Auto-close modal after user clicks "Open WhatsApp"
+    const sendWaDirectBtn = document.getElementById('sendWaDirectBtn');
+    if (sendWaDirectBtn) {
+      sendWaDirectBtn.addEventListener('click', () => {
+        setTimeout(() => {
+          closeAllModals();
+        }, 400);
       });
     }
 
